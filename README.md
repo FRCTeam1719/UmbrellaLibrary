@@ -2,17 +2,17 @@
 
 ### How to use
 
-Add to the build.xml file lines reading the following (brackets ([] but not {} or <>) indecate that you should replace their contents with the system-specific option specified):
+Add the lines below to your build.xml file.  Where you see square brackets (like these []) replace their contents with the actual value on your system.
 
-<exec executable="rm">
-<arg value="-rf" />
-<arg value="${basedir}/src/org/usfirst/frc1719j/ulib" />
-</exec>
-<exec executable="cp">
-<arg value="-R" />
-<arg value="[path to library repo]/UmbrellaLibrary/src/org" />
-<arg value="src/" />
-</exec>
+	<exec executable="rm">
+	<arg value="-rf" />
+	<arg value="${basedir}/src/org/usfirst/frc1719j/ulib" />
+	</exec>
+	<exec executable="cp">
+	<arg value="-R" />
+	<arg value="[path to UmbrellaLibrary repository]/UmbrellaLibrary/src/org" />
+	<arg value="src/" />
+	</exec>
 
 ### The Umbrella Library Manifesto
 
