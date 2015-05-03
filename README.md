@@ -1,5 +1,19 @@
 # Umbrella-Library
 
+### How to use
+
+Add to the build.xml file lines reading the following (brackets ([] but not {} or <>) indecate that you should replace their contents with the system-specific option specified):
+
+<exec executable="rm">
+<arg value="-rf" />
+<arg value="${basedir}/src/org/usfirst/frc1719j/ulib" />
+</exec>
+<exec executable="cp">
+<arg value="-R" />
+<arg value="[path to library repo]/UmbrellaLibrary/src/org" />
+<arg value="src/" />
+</exec>
+
 ### The Umbrella Library Manifesto
 
 The Umbrella Library seeks to provide support for generic robot functions reliably, so that in-season programming effort can be spent on robot-specific tasks. The Umbrella Library wishes to provide support for the following:
