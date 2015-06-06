@@ -38,13 +38,14 @@ public class Drive extends Subsystem implements ITestable {
 	private Class<? extends Command> _default;
 	
 	/**
+	 * Creates a new Drive object, assuming mechanum drive.
 	 * 
 	 * @param par1 the left front motor.
 	 * @param par2 the left rear motor.
 	 * @param par3 the right front motor.
 	 * @param par4 the right rear motor.
 	 * @param par5 the gyro to use for PID.
-	 * @param par6 the default command to use.
+	 * @param par6 the default command to use. Usually implemented to read from the joystick and move accordingly.
 	 */
 	public Drive(SpeedController par1, SpeedController par2, SpeedController par3, SpeedController par4, Gyro par5, Class<? extends Command> par6) {
 	    robotDrive = new RobotDrive(par1, par2, par3, par4);
@@ -84,6 +85,14 @@ public class Drive extends Subsystem implements ITestable {
 				rotation);
 	}
 
+	/**
+	 * Move the Mechanum drive based on cartesian input (e.g. input directly from a joystick axes) 
+	 * 
+	 * @param x a double on the interval [-1.0,1.0], representing the speed to move at on the x axis (negative=left, positive=right)
+	 * @param y a double on the interval [-1.0,1.0], representing the speed to move at on the y axis (negative=forward, positive=backward)
+	 * @param rot a double on the interval [-1.0,1.0], representing the speed at which to rotate (negative=anticlockwise, positive=clockwise)
+	 * @param usePID true if PID should be enabled (will be auto-disabled inside method for non-zero rotation), false to disable and reset PID
+	 */
 	public void moveCartesian(double x, double y, double rot, boolean usePID) {
 		// get PID constants
 		double KP = SmartDashboard.getNumber("KP") * 0.001D;
@@ -120,6 +129,7 @@ public class Drive extends Subsystem implements ITestable {
 		robotDrive.mecanumDrive_Cartesian(x, y, rot, 0);
 	}
 
+	@Override
 	public void initDefaultCommand() {
 		try {
             setDefaultCommand(_default.newInstance());
@@ -161,10 +171,5 @@ public class Drive extends Subsystem implements ITestable {
 	public void reset() {
 		interationNumber = 0;
 		moveCartesian(0.0D, 0.0D, 0.0D, false);
-	}
-	
-	@Override
-	public String getName() {
-		return "Drive Test";
 	}
 }
