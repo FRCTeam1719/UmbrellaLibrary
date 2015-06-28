@@ -11,11 +11,13 @@ public class MB1220UltrasonicAnalog {
 		in = new AnalogInput(par1);
 	}
 
-	public long getDistanceCM() {
-		return Math.round(in.getVoltage() * SCALING_5V);
+	public int getDistanceCM() {
+		int var1 = (int) Math.round(in.getVoltage() * SCALING_5V);
+		return ((var1 == 343) ? -1 : var1);
 	}
 	
 	public double getDistanceM() {
-		return 0.01D * ((double) getDistanceCM());
+	    int var1 = getDistanceCM();
+		return ((var1 == -1) ? -1 : (0.01D * var1));
 	}
 }

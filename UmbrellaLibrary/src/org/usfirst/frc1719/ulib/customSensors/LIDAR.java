@@ -33,7 +33,9 @@ public class LIDAR {
 		int var2 = distance[1];
 		if(var2 < 0) var2 += 256;
 		
-		return (var1 << 8) + var2;
+		int var3 = (var1 << 8) + var2;
+		
+		return ((var3 == 0) ? -1 : var3);
 	}
 
 	// Start 10Hz polling
