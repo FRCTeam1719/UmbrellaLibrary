@@ -1,107 +1,50 @@
 package subsystems;
 
+import commands.UseDrive;
 import customSensors.LoggableEncoder;
 import customSensors.NavX;
-import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import interfaces.IDrive;
 import interfaces.Loggable;
+import interfaces.RobotInterface;
 
-public class TankDrive extends Subsystem implements Loggable {
-	
-	private double maxSpeed = 1;
-	
-	private LoggableEncoder leftSideEncoder;
-	private LoggableEncoder rightSideEncoder;
-	
-	private NavX navX;
-	
-	private RobotDrive mainDrive;
+public class TankDrive extends Subsystem implements IDrive, Loggable {
 
-	/**
-	 * 
-	 * @param rightSide Controller for the right side of the drive
-	 * @param leftSide Controller for the left side of the drive
-	 */
-	public TankDrive(SpeedController leftSide, SpeedController rightSide) {
-		
-		if (rightSide == null) {
-			//TODO error handling
-		}
-		if (leftSide == null) {
-			//TODO error handling
-		}
-		
-		mainDrive = new RobotDrive(leftSide, rightSide);
-		
-	}
+	LogicalDrive logicDrive;
+	RobotInterface robot;
 	
-	public TankDrive(SpeedController leftSide, SpeedController rightSide, LoggableEncoder leftEncoder, LoggableEncoder rightEncoder) {
+	public TankDrive(RobotInterface robot, SpeedController leftSide, SpeedController rightSide,
+			LoggableEncoder leftEncoder, LoggableEncoder rightEncoder) {
 		
-		if (rightSide == null) {
-			//TODO error handling
-		}
-		if (leftSide == null) {
-			//TODO error handling
-		}
-		if (leftEncoder == null) {
-			//TODO error handling
-		}
-		if (rightEncoder == null) {
-			//TODO error handling
-		}
-		
-		this.leftSideEncoder = leftEncoder;
-		this.rightSideEncoder = rightEncoder;
-		mainDrive = new RobotDrive(leftSide, rightSide);
+		this.robot = robot;
+		logicDrive = new LogicalDrive(leftSide, rightSide, leftEncoder, rightEncoder);
 	}
-	
-	public TankDrive(SpeedController leftSide, SpeedController rightSide, NavX navX) {
+
+	public TankDrive(RobotInterface robot, SpeedController leftSide, SpeedController rightSide, NavX navX) {
 		
-		if (rightSide == null) {
-			//TODO error handling
-		}
-		if (leftSide == null) {
-			//TODO error handling
-		}
-		if (navX == null) {
-			//TODO error handling
-		}
-		
-		this.navX = navX;
-		
-		mainDrive = new RobotDrive(leftSide, rightSide);
+		this.robot = robot;
+		logicDrive = new LogicalDrive(leftSide, rightSide, navX);
 	}
-	
-	/**
-	 * Operates the drive. Sets each side run at the speeds given
-	 * @param leftSpeed
-	 * @param rightSpeed
-	 */
-	public void operateDrive(double leftSpeed, double rightSpeed) {
-		if (Math.abs(leftSpeed) > maxSpeed) {
-			//TODO error handling
-		}
-		if (Math.abs(rightSpeed) > maxSpeed) {
-			//TODO error handling
-		}
+
+	public TankDrive(RobotInterface robot, SpeedController leftSide, SpeedController rightSide) {
 		
-		mainDrive.tankDrive(leftSpeed, rightSpeed);
-		
+		this.robot = robot;
+		logicDrive = new LogicalDrive(leftSide, rightSide);
+	}
+
+	@Override
+	public void operateDrive(double leftVal, double rightVal) {
+		logicDrive.operateDrive(leftVal, rightVal);
 	}
 	
 	public void setMaxSpeed(double speed) {
-		if (speed < 0) {
-			//TODO error handling
-		}
-		if (speed > 1) {
-			//TODO error handling
-		}
-		maxSpeed = speed;
+		logicDrive.setMaxSpeed(speed);
 	}
+
 	@Override
 	protected void initDefaultCommand() {
-		// TODO Auto-generated method stub
+		setDefaultCommand(new UseDrive(robot, this));
 		
 	}
 
@@ -110,5 +53,7 @@ public class TankDrive extends Subsystem implements Loggable {
 		// TODO Auto-generated method stub
 		
 	}
+
+
 
 }
