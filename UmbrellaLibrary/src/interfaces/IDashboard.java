@@ -1,6 +1,6 @@
 package interfaces;
 
-public interface TestableDashboard {
+public interface IDashboard {
 
 	public void _putBoolean(String key, boolean value);
 	

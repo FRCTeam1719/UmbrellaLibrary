@@ -1,22 +1,22 @@
 package subsystems;
 
-import customSensors.LoggableEncoder;
-import customSensors.NavX;
-import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SpeedController;
 import interfaces.IDrive;
-import interfaces.Loggable;
+import interfaces.IEncoder;
+import interfaces.INavX;
 
 public class LogicalDrive implements IDrive {
 	
 	private double maxSpeed = 1;
 	
-	private LoggableEncoder leftSideEncoder;
-	private LoggableEncoder rightSideEncoder;
+	private IEncoder leftSideEncoder = null;
+	private IEncoder rightSideEncoder = null;
 	
-	private NavX navX;
+	private SpeedController leftMotor;
+	private SpeedController rightMotor;
 	
-	private RobotDrive mainDrive;
+	private INavX navX;
+	
 
 	/**
 	 * 
@@ -24,58 +24,60 @@ public class LogicalDrive implements IDrive {
 	 * @param leftSide Controller for the left side of the drive
 	 */
 	public LogicalDrive(SpeedController leftSide, SpeedController rightSide) {
-		
-		mainDrive = new RobotDrive(leftSide, rightSide);
-		
+		this.leftMotor = leftSide;
+		this.rightMotor = rightSide;
 	}
 	
-	public LogicalDrive(SpeedController leftSide, SpeedController rightSide, LoggableEncoder leftEncoder, LoggableEncoder rightEncoder) {
+	public LogicalDrive(SpeedController leftSide, SpeedController rightSide, IEncoder leftEncoder, IEncoder rightEncoder) {
+		
+		this.leftMotor = leftSide;
+		this.rightMotor = rightSide;
 		
 		if (leftEncoder == null) {
-			throw new NullPointerException("Null left Encoder provided");
+			throw new NullPointerException("Null left Encoder provided. Make sure that there are no port conflicts and that the encoder is plugged in correctly");
 		}
 		else if (rightEncoder == null) {
-			throw new NullPointerException("Null right Encoder provided");
+			throw new NullPointerException("Null left Encoder provided. Make sure that there are no port conflicts and that the encoder is plugged in correctly");
 		}
 		
 		this.leftSideEncoder = leftEncoder;
 		this.rightSideEncoder = rightEncoder;
-		mainDrive = new RobotDrive(leftSide, rightSide);
 	}
 	
-	public LogicalDrive(SpeedController leftSide, SpeedController rightSide, NavX navX) {
+	public LogicalDrive(SpeedController leftSide, SpeedController rightSide, INavX navX) {
+		
+		this.leftMotor = leftSide;
+		this.rightMotor = rightSide;
 		
 		if (navX == null) {
-			throw new NullPointerException("Null NavX provided");
+			throw new NullPointerException("Null NavX provided. Make sure that the NavX is securely plugged in to the MXP");
 		}
 		this.navX = navX;
-		mainDrive = new RobotDrive(leftSide, rightSide);
 	}
 	
 	/**
-	 * Operates the drive. Sets each side run at the speeds given
-	 * @param leftSpeed
-	 * @param rightSpeed
+	 * Operating the drive escapes the bounds of a logical subsystem.
+	 * Actually operating the drive needs to exist in TankDrive.java unless we
+	 * decide to do away with using a RobotDrive and simply directly control
+	 * two SpeedController objects, right now, this method should only be used
+	 * when running unit tests.
 	 */
+	@Deprecated
 	public void operateDrive(double leftSpeed, double rightSpeed) {
-		
-		leftSpeed = checkAgainstMaxSpeed(leftSpeed);
-		rightSpeed = checkAgainstMaxSpeed(rightSpeed);
-		
-		mainDrive.tankDrive(leftSpeed, rightSpeed);
+		leftMotor.set(leftSpeed);
+		rightMotor.set(rightSpeed);
 	}
 	
+	/* Doesn't do any error checking because we want to be able to test
+	 * if someone passed in a bad value using JUnit
+	 * Should only be passed values between 0 and 1.
+	 */
 	public void setMaxSpeed(double speed) {
-		if (speed < 0) {
-			//TODO error handling
-		}
-		if (speed > 1) {
-			//TODO error handling
-		}
+		
 		maxSpeed = speed;
 	}
 	
-	private double checkAgainstMaxSpeed(double speed) {
+	public double checkAgainstMaxSpeed(double speed) {
 		if (speed < 0) {
 			if (speed < -maxSpeed) {
 				speed = -maxSpeed;
@@ -89,4 +91,35 @@ public class LogicalDrive implements IDrive {
 		
 		return speed;
 	}
+
+	@Override
+	public double getLeftEncoderDist() {
+		return rightSideEncoder.getDistance();
+	}
+
+	@Override
+	public double getRightEncoderDist() {
+		return rightSideEncoder.getDistance();
+	}
+
+	@Override
+	public double getLeftEncoderRate() {
+		return leftSideEncoder.getRate();
+	}
+
+	@Override
+	public double getRightEncoderRate() {
+		return rightSideEncoder.getRate();
+		
+	}
+	
+	public double getAngle() {
+		return navX.getAngle();
+	}
+	
+	public INavX getNavX() {
+		return navX;
+	}
+
+
 }

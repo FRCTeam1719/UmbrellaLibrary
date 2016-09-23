@@ -2,10 +2,9 @@ package customSensors;
 
 import edu.wpi.first.wpilibj.DigitalSource;
 import edu.wpi.first.wpilibj.Encoder;
-import interfaces.Loggable;
-import interfaces.Sensor;
+import interfaces.IEncoder;
 
-public class LoggableEncoder extends Encoder implements Sensor, Loggable {
+public class LoggableEncoder extends Encoder implements IEncoder {
 
 	public LoggableEncoder(DigitalSource aSource, DigitalSource bSource) {
 		super(aSource, bSource);
