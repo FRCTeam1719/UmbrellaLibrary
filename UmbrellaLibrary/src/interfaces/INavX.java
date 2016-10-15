@@ -1,10 +1,15 @@
 package interfaces;
 
-public interface INavX {
+import edu.wpi.first.wpilibj.PIDSource;
+
+public interface INavX extends PIDSource {
 	
 	public double getAngle();
+	public double getRate();
 	
-	public double getYaw();
-	public double getPitch();
-	public double getRoll();
+	public float getYaw();
+	public float getPitch();
+	public float getRoll();
+	
+	public void reset();
 }

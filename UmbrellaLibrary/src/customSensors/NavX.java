@@ -3,10 +3,11 @@ package customSensors;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SPI.Port;
+import interfaces.INavX;
 import interfaces.Loggable;
 import interfaces.Sensor;
 
-public class NavX extends AHRS implements Sensor, Loggable {
+public class NavX extends AHRS implements INavX, Sensor, Loggable {
 
 	@Override
 	public void log() {

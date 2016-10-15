@@ -92,6 +92,16 @@ public class TankDrive extends Subsystem implements IDrive, Loggable {
 		return logicDrive.getNavX();
 	}
 
+	@Override
+	public double getAvgEncoderDist() {
+		return logicDrive.getAvgEncoderDist();
+	}
+
+	@Override
+	public double getAvgEncoderRate() {
+		return logicDrive.getAvgEncoderRate();
+	}
+
 
 
 }

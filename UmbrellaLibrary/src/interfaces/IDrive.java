@@ -11,6 +11,9 @@ public interface IDrive extends LogicalSubsystem {
 	public double getLeftEncoderRate();
 	public double getRightEncoderRate();
 	
+	public double getAvgEncoderDist();
+	public double getAvgEncoderRate();
+	
 	public double getAngle();
 	public INavX getNavX();
 }
