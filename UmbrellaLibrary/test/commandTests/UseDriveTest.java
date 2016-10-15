@@ -23,7 +23,7 @@ public class UseDriveTest {
 	
 	@Test
 	public void testInitialize() {
-		assertTrue(leftMotor.get() == 0);
+		assertTrue(leftMotor.get() == 1);
 		assertTrue(rightMotor.get() == 0);
 	}
 	

@@ -10,9 +10,7 @@ public class DualLimitedSpeedController implements SpeedController {
 	SpeedController motor;
 	IDigitalInput forwardInput;
 	IDigitalInput backwardInput;
-	
-	private double currentSpeed;
-	
+		
 	public DualLimitedSpeedController(IDigitalInput forward, IDigitalInput back, SpeedController motor, boolean normallyClosed) {
 		this.motor = motor;
 		this.forwardInput = forward;
@@ -27,7 +25,7 @@ public class DualLimitedSpeedController implements SpeedController {
 
 	@Override
 	public double get() {
-		return currentSpeed;
+		return motor.get();
 	}
 
 	private void setSpeed(double speed) {
@@ -51,13 +49,11 @@ public class DualLimitedSpeedController implements SpeedController {
 	@Override
 	public void set(double speed, byte syncGroup) {
 		setSpeed(speed);
-		currentSpeed = speed;
 	}
 
 	@Override
 	public void set(double speed) {
 		setSpeed(speed);
-		currentSpeed = speed;
 	}
 
 	@Override
