@@ -1,18 +1,6 @@
 # Umbrella-Library
 
-### How to use
 
-Add the lines below to your build.xml file.  Where you see square brackets (like these []) replace their contents with the actual value on your system.
-
-	<exec executable="rm">
-	<arg value="-rf" />
-	<arg value="${basedir}/src/org/usfirst/frc1719j/ulib" />
-	</exec>
-	<exec executable="cp">
-	<arg value="-R" />
-	<arg value="[path to UmbrellaLibrary repository]/UmbrellaLibrary/src/org" />
-	<arg value="src/" />
-	</exec>
 
 ### The Umbrella Library Manifesto
 
