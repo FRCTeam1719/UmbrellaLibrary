@@ -15,11 +15,6 @@ public class MockSpeedController implements SpeedController {
 	}
 
 	@Override
-	public void set(double speed, byte syncGroup) {
-		currentSpeed = speed;
-	}
-
-	@Override
 	public void set(double speed) {
 		currentSpeed = speed;
 	}

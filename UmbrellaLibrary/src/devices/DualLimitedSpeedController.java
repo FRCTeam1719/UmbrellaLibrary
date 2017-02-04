@@ -46,10 +46,6 @@ public class DualLimitedSpeedController implements SpeedController {
 			}
 		}
 	}
-	@Override
-	public void set(double speed, byte syncGroup) {
-		setSpeed(speed);
-	}
 
 	@Override
 	public void set(double speed) {
