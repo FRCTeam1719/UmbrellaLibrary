@@ -7,7 +7,7 @@ import org.junit.Test;
 import mockHardware.MockEncoder;
 import mockHardware.MockRobot;
 import mockHardware.MockSpeedController;
-import subsystems.LogicalDrive;
+import subsystems.DriveLogic;
 
 public class LogicalDriveTest {
 
@@ -17,7 +17,7 @@ public class LogicalDriveTest {
 	MockEncoder leftEnc;
 	MockEncoder rightEnc;
 	
-	LogicalDrive drive;
+	DriveLogic drive;
 	
 	
 	void setup() {
@@ -27,7 +27,7 @@ public class LogicalDriveTest {
 		leftEnc = new MockEncoder();
 		rightEnc = new MockEncoder();
 		
-		drive = new LogicalDrive(leftMotor, rightMotor, leftEnc, rightEnc);
+		drive = new DriveLogic(leftMotor, rightMotor, leftEnc, rightEnc);
 	}
 	
 	@Test

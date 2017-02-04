@@ -7,7 +7,7 @@ import org.junit.Test;
 import commands.UseDrive;
 import mockHardware.MockRobot;
 import mockHardware.MockSpeedController;
-import subsystems.LogicalDrive;
+import subsystems.DriveLogic;
 
 public class UseDriveTest {
 
@@ -16,7 +16,7 @@ public class UseDriveTest {
 	private MockSpeedController leftMotor = new MockSpeedController();
 	private MockSpeedController rightMotor = new MockSpeedController();
 	
-	private LogicalDrive drive = new LogicalDrive(leftMotor, rightMotor);
+	private DriveLogic drive = new DriveLogic(leftMotor, rightMotor);
 	
 	private UseDrive command = new UseDrive(robot, drive);
 	

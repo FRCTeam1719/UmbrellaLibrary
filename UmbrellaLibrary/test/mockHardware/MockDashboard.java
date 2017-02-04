@@ -2,6 +2,7 @@ package mockHardware;
 
 import java.util.Hashtable;
 
+import edu.wpi.first.wpilibj.Sendable;
 import interfaces.IDashboard;
 
 public class MockDashboard implements IDashboard {
@@ -38,6 +39,11 @@ public class MockDashboard implements IDashboard {
 	@Override
 	public String _getString(String key) {
 		return strings.get(key);
+	}
+
+	@Override
+	public void putData(String string, Sendable pidController) {
+		
 	}
 
 }

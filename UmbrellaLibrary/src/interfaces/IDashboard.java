@@ -1,5 +1,7 @@
 package interfaces;
 
+import edu.wpi.first.wpilibj.Sendable;
+
 public interface IDashboard {
 
 	public void _putBoolean(String key, boolean value);
@@ -13,5 +15,7 @@ public interface IDashboard {
 	public void _putString(String key, String value);
 	
 	public String _getString(String key);
+
+	public void putData(String string, Sendable pidController);
 	
 }

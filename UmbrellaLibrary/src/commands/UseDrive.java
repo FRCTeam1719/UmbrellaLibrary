@@ -38,7 +38,7 @@ public class UseDrive extends TestableCommand {
 		leftJoystickVal = Math.pow(Math.abs(leftJoystickVal), 2) * leftJoystickVal;
 		rightJoystickVal = Math.pow(Math.abs(rightJoystickVal), 2) * rightJoystickVal;
 		
-		drive.operateDrive(leftJoystickVal, rightJoystickVal);		
+		drive.driveTank(leftJoystickVal, rightJoystickVal);		
 	}
 
 	@Override

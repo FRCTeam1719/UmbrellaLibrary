@@ -6,7 +6,7 @@ import commands.TurnToAngle;
 import mockHardware.MockNavX;
 import mockHardware.MockRobot;
 import mockHardware.MockSpeedController;
-import subsystems.LogicalDrive;
+import subsystems.DriveLogic;
 
 public class TurnToAngleTest {
 
@@ -15,7 +15,7 @@ public class TurnToAngleTest {
 	private MockSpeedController leftMotor = new MockSpeedController();
 	private MockSpeedController rightMotor = new MockSpeedController();
 	private MockNavX navX = new MockNavX();
-	private LogicalDrive drive = new LogicalDrive(leftMotor, rightMotor, navX);
+	private DriveLogic drive = new DriveLogic(leftMotor, rightMotor, navX);
 	private TurnToAngle command = new TurnToAngle(robot, drive, 90, true);
 	
 	@Test

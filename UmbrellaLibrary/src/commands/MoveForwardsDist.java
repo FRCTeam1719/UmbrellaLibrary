@@ -10,11 +10,7 @@ import interfaces.RobotInterface;
 public class MoveForwardsDist extends TestableCommand implements PIDOutput {
 	
 	public static final double MOVE_FORWARDS_DIST_TOLERANCE_FEET = 0.1;
-	public static final double MOVE_FORWARDS_TIMEOUT = 5;
-
-	public static final String MOVE_FORWARDS_KP_DASHBOARD_STRING = "Move forwards kP: ";
-	public static final String MOVE_FORWARDS_KI_DASHBOARD_STRING = "Move forwards kI: ";
-	public static final String MOVE_FORWARDS_KD_DASHBOARD_STRING = "Move forwards kD: ";
+	public static final double MOVE_FORWARDS_TIMEOUT_SECONDS = 5;
 	
 	private double desiredDistance;
 	
@@ -23,22 +19,19 @@ public class MoveForwardsDist extends TestableCommand implements PIDOutput {
 	private PIDController pidController;
 	private Timer timeoutTimer;
 	
-	private double kP;
-	private double kI;
-	private double kD;
+	private double kP = 0;
+	private double kI = 0;
+	private double kD = 0;
 	
 	public MoveForwardsDist(RobotInterface robot, LogicalSubsystem system, double distance) {
 		super(robot, system);
-		
 		this.desiredDistance = distance;
 	}
 
 	@Override
 	protected void initialize() {
-		kP = robot.getDashboard()._getNumber(MOVE_FORWARDS_KP_DASHBOARD_STRING);
-		kI = robot.getDashboard()._getNumber(MOVE_FORWARDS_KI_DASHBOARD_STRING);
-		kD = robot.getDashboard()._getNumber(MOVE_FORWARDS_KD_DASHBOARD_STRING);
 		
+		//Initialize PID controller
 		pidController = new PIDController(kP, kI, kD, ((IDrive) system).getNavX(), this);
 		
 		pidController.setOutputRange(-1, 1);
@@ -47,18 +40,20 @@ public class MoveForwardsDist extends TestableCommand implements PIDOutput {
 		
 		pidController.setSetpoint(desiredDistance);
 		pidController.enable();
+		
+		robot.getDashboard().putData("MoveForwardsDist Command controller", pidController);
 		timeoutTimer.start();
 	}
 
 	@Override
 	protected void execute() {
 		
-		((IDrive) system).operateDrive(leftOutput, rightOutput);
+		((IDrive) system).driveTank(leftOutput, rightOutput);
 	}
 
 	@Override
 	protected boolean isFinished() {
-		return pidController.onTarget() || (timeoutTimer.get() >= MOVE_FORWARDS_TIMEOUT);
+		return pidController.onTarget() || (timeoutTimer.get() >= MOVE_FORWARDS_TIMEOUT_SECONDS);
 	}
 
 	@Override

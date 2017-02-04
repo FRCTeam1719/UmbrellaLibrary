@@ -7,9 +7,10 @@ import interfaces.IDrive;
 import interfaces.IEncoder;
 import interfaces.INavX;
 
-public class LogicalDrive implements IDrive, PIDSource {
+public class DriveLogic implements IDrive, PIDSource {
 	
 	private PIDSourceType pidSourceType;
+	
 	private double maxSpeed = 1;
 	
 	private IEncoder leftSideEncoder = null;
@@ -26,13 +27,13 @@ public class LogicalDrive implements IDrive, PIDSource {
 	 * @param rightSide Controller for the right side of the drive
 	 * @param leftSide Controller for the left side of the drive
 	 */
-	public LogicalDrive(SpeedController leftSide, SpeedController rightSide) {
+	public DriveLogic(SpeedController leftSide, SpeedController rightSide) {
 		pidSourceType = PIDSourceType.kDisplacement;
 		this.leftMotor = leftSide;
 		this.rightMotor = rightSide;
 	}
 	
-	public LogicalDrive(SpeedController leftSide, SpeedController rightSide, IEncoder leftEncoder, IEncoder rightEncoder) {
+	public DriveLogic(SpeedController leftSide, SpeedController rightSide, IEncoder leftEncoder, IEncoder rightEncoder) {
 		this(leftSide, rightSide);
 		
 		if (leftEncoder == null) {
@@ -46,7 +47,7 @@ public class LogicalDrive implements IDrive, PIDSource {
 		this.rightSideEncoder = rightEncoder;
 	}
 	
-	public LogicalDrive(SpeedController leftSide, SpeedController rightSide, INavX navX) {
+	public DriveLogic(SpeedController leftSide, SpeedController rightSide, INavX navX) {
 		this(leftSide, rightSide);
 		
 		if (navX == null) {
@@ -55,7 +56,7 @@ public class LogicalDrive implements IDrive, PIDSource {
 		this.navX = navX;
 	}
 	
-	public LogicalDrive(SpeedController leftSide, SpeedController rightSide, IEncoder leftEncoder, IEncoder rightEncoder, INavX navX) {
+	public DriveLogic(SpeedController leftSide, SpeedController rightSide, IEncoder leftEncoder, IEncoder rightEncoder, INavX navX) {
 		this(leftSide, rightSide, leftEncoder, rightEncoder);
 		
 		if (navX == null) {
@@ -63,17 +64,10 @@ public class LogicalDrive implements IDrive, PIDSource {
 		}
 		this.navX = navX;
 	}
-	/**
-	 * Operating the drive escapes the bounds of a logical subsystem.
-	 * Actually operating the drive needs to exist in TankDrive.java unless we
-	 * decide to do away with using a RobotDrive and simply directly control
-	 * two SpeedController objects, right now, this method should only be used
-	 * when running unit tests.
-	 */
-	@Deprecated
-	public void operateDrive(double leftSpeed, double rightSpeed) {
-		leftMotor.set(leftSpeed);
-		rightMotor.set(rightSpeed);
+	
+	public void driveTank(double leftSpeed, double rightSpeed) {
+		leftMotor.set(checkAgainstMaxSpeed(leftSpeed));
+		rightMotor.set(checkAgainstMaxSpeed(rightSpeed));
 	}
 	
 	/* Doesn't do any error checking because we want to be able to test
@@ -173,6 +167,27 @@ public class LogicalDrive implements IDrive, PIDSource {
 		else {
 			return getAvgEncoderDist();
 		}
+	}
+
+	@Override
+	public IEncoder getLeftEncoder() {
+		return leftSideEncoder;
+	}
+
+	@Override
+	public IEncoder getRightEncoder() {
+		return rightSideEncoder;
+	}
+
+	@Override
+	public void disable() {
+		leftMotor.set(0);
+		rightMotor.set(0);
+	}
+
+	@Override
+	public void log() {
+		
 	}
 
 

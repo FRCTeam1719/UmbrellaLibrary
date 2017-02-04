@@ -59,7 +59,7 @@ public class TurnToAngle extends TestableCommand implements PIDOutput {
 	@Override
 	protected void execute() {
 
-		((IDrive) system).operateDrive(leftOutput, rightOutput);
+		((IDrive) system).driveTank(leftOutput, rightOutput);
 		
 	}
 

@@ -1,5 +1,6 @@
 package mockHardware;
 
+import edu.wpi.first.wpilibj.PIDSourceType;
 import interfaces.IEncoder;
 import interfaces.Sensor;
 
@@ -7,6 +8,7 @@ public class MockEncoder implements Sensor, IEncoder{
 
 	double currentDistance;
 	double currentRate;
+	PIDSourceType sourceType = PIDSourceType.kDisplacement;
 	
 	@Override
 	public double getDistance() {
@@ -33,6 +35,26 @@ public class MockEncoder implements Sensor, IEncoder{
 
 	@Override
 	public void log() {		
+	}
+
+	@Override
+	public void setPIDSourceType(PIDSourceType pidSource) {
+		this.sourceType = pidSource;
+	}
+
+	@Override
+	public PIDSourceType getPIDSourceType() {
+		return sourceType;
+	}
+
+	@Override
+	public double pidGet() {
+		if (sourceType == PIDSourceType.kDisplacement) {
+			return currentDistance;
+		}
+		else {
+			return currentRate;
+		}
 	}
 
 }
