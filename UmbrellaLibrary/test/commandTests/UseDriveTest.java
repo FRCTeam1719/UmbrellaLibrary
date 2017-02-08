@@ -4,7 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import commands.UseDrive;
+import commands.UseDriveTank;
 import mockHardware.MockRobot;
 import mockHardware.MockSpeedController;
 import subsystems.DriveLogic;
@@ -18,7 +18,7 @@ public class UseDriveTest {
 	
 	private DriveLogic drive = new DriveLogic(leftMotor, rightMotor);
 	
-	private UseDrive command = new UseDrive(robot, drive);
+	private UseDriveTank command = new UseDriveTank(robot, drive);
 	
 	
 	@Test

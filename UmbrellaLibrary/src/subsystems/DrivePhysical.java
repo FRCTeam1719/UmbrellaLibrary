@@ -1,9 +1,10 @@
 package subsystems;
 
-import commands.UseDrive;
+import commands.UseDriveTank;
 import customSensors.LoggableEncoder;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import interfaces.IDrive;
 import interfaces.IEncoder;
@@ -48,8 +49,18 @@ public class DrivePhysical extends Subsystem implements IDrive, Loggable {
 
 	@Override
 	protected void initDefaultCommand() {
-		setDefaultCommand(new UseDrive(robot, this));
-		
+		setDefaultCommand(new UseDriveTank(robot, this));	
+	}
+	
+	
+	/**
+	 * With this you can live-switch the default command, allowing you to change to
+	 * UseDriveVelocityPID or UseDriveArcade in the middle of a match
+	 */
+	@Override
+	public void setDefaultCommand(Command command) {
+		super.setDefaultCommand(command);
+		command.start();
 	}
 
 	@Override
