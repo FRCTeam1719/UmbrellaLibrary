@@ -3,16 +3,30 @@ package commands;
 import interfaces.IDrive;
 import interfaces.RobotInterface;
 
+/**
+ * Command for using the drive in tank mode
+ * @author Kyle
+ *
+ */
 public class UseDriveTank extends TestableCommand {
 
-	private final double DEADZONE = 0.05D;
-	final double SYNCHTOLERANCE = 0.15;
+	// If the joystick is close to the middle, set it to 0
+	protected double joystickDeadzone = 0.1;
+
+	// If the joystick values are close to each other, synch them
+	protected double synchTolerance = 0.1;
 
 	IDrive drive;
 
 	public UseDriveTank(RobotInterface robot, IDrive drive) {
 		super(robot, drive);
 		this.drive = drive;
+	}
+	
+	public UseDriveTank(RobotInterface robot, IDrive drive, double deadzone, double synchTolerance) {
+		this(robot, drive);
+		this.joystickDeadzone = deadzone;
+		this.synchTolerance = synchTolerance;
 	}
 
 	@Override
@@ -29,12 +43,12 @@ public class UseDriveTank extends TestableCommand {
 		double scaledRight = expJoystickValue(rawLeftJoystickVal, 2);
 		
 		double[] synched = synchJoystickValues(rawLeftJoystickVal, rawRightJoystickVal,
-				scaledLeft, scaledRight, SYNCHTOLERANCE);
+				scaledLeft, scaledRight, synchTolerance);
 		scaledLeft = synched[0];
 		scaledRight = synched[1];
 		
-		scaledLeft = applyDeadZone(rawLeftJoystickVal, scaledLeft, DEADZONE);
-		scaledRight = applyDeadZone(rawRightJoystickVal, scaledRight, DEADZONE);
+		scaledLeft = applyDeadZone(rawLeftJoystickVal, scaledLeft, joystickDeadzone);
+		scaledRight = applyDeadZone(rawRightJoystickVal, scaledRight, joystickDeadzone);
 
 		drive.driveTank(scaledLeft, scaledRight);
 	}
