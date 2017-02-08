@@ -16,8 +16,6 @@ public class DrivePhysical extends Subsystem implements IDrive, Loggable {
 
 	DriveLogic logicDrive;
 	RobotInterface robot;
-	SpeedController leftMotor;
-	SpeedController rightMotor;
 	
 	public DrivePhysical(RobotInterface robot, SpeedController leftSide, SpeedController rightSide,
 			LoggableEncoder leftEncoder, LoggableEncoder rightEncoder) {
@@ -38,9 +36,27 @@ public class DrivePhysical extends Subsystem implements IDrive, Loggable {
 		logicDrive = new DriveLogic(leftSide, rightSide);
 	}
 
+	/**
+	 * Move the robot by setting the left and right motor values
+	 * 
+	 * @param leftSpeed The value given to the left motor
+	 * @param rightSpeed The value given to the right motor
+	 */
 	@Override
 	public void driveTank(double leftVal, double rightVal) {
 		logicDrive.driveTank(leftVal, rightVal);
+	}
+	
+	
+	/**
+	 * Move the robot by providing a speed value and a rotate value
+	 * 
+	 * @param speed The speed to move the robot at
+	 * @param rotate Rotates the robot while it moves
+	 */
+	@Override
+	public void driveArcade(double speed, double rotate) {
+		logicDrive.driveArcade(speed, rotate);
 	}
 	
 	public void setMaxSpeed(double speed) {
@@ -55,7 +71,7 @@ public class DrivePhysical extends Subsystem implements IDrive, Loggable {
 	
 	/**
 	 * With this you can live-switch the default command, allowing you to change to
-	 * UseDriveVelocityPID or UseDriveArcade in the middle of a match
+	 * UseDriveVelocityPID, UseDriveArcade, etc in the middle of a match
 	 */
 	@Override
 	public void setDefaultCommand(Command command) {
@@ -89,8 +105,18 @@ public class DrivePhysical extends Subsystem implements IDrive, Loggable {
 	}
 
 	@Override
-	public double getAngle() {
-		return logicDrive.getAngle();
+	public double getYaw() {
+		return logicDrive.getYaw();
+	}
+	
+	@Override
+	public double getPitch() {
+		return logicDrive.getPitch();
+	}
+
+	@Override
+	public double getRoll() {
+		return logicDrive.getRoll();
 	}
 	
 	@Override
@@ -137,7 +163,5 @@ public class DrivePhysical extends Subsystem implements IDrive, Loggable {
 	public double pidGet() {
 		return logicDrive.pidGet();
 	}
-
-
 
 }

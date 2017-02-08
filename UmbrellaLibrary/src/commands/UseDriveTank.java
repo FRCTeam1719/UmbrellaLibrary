@@ -5,6 +5,7 @@ import interfaces.RobotInterface;
 
 /**
  * Command for using the drive in tank mode
+ * 
  * @author Kyle
  *
  */
@@ -15,6 +16,9 @@ public class UseDriveTank extends TestableCommand {
 
 	// If the joystick values are close to each other, synch them
 	protected double synchTolerance = 0.1;
+	
+	//Rase joystick values to a power to give more fine control
+	protected int joystickExp = 1;
 
 	IDrive drive;
 
@@ -22,11 +26,12 @@ public class UseDriveTank extends TestableCommand {
 		super(robot, drive);
 		this.drive = drive;
 	}
-	
-	public UseDriveTank(RobotInterface robot, IDrive drive, double deadzone, double synchTolerance) {
+
+	public UseDriveTank(RobotInterface robot, IDrive drive, double deadzone, double synchTolerance, int joystickExp) {
 		this(robot, drive);
 		this.joystickDeadzone = deadzone;
 		this.synchTolerance = synchTolerance;
+		this.joystickExp = joystickExp;
 	}
 
 	@Override
@@ -39,14 +44,14 @@ public class UseDriveTank extends TestableCommand {
 		double rawLeftJoystickVal = robot.getOi().getDriverLeftY();
 		double rawRightJoystickVal = robot.getOi().getDriverRightY();
 
-		double scaledLeft = expJoystickValue(rawLeftJoystickVal, 2);
-		double scaledRight = expJoystickValue(rawLeftJoystickVal, 2);
-		
-		double[] synched = synchJoystickValues(rawLeftJoystickVal, rawRightJoystickVal,
-				scaledLeft, scaledRight, synchTolerance);
+		double scaledLeft = expJoystickValue(rawLeftJoystickVal, joystickExp);
+		double scaledRight = expJoystickValue(rawLeftJoystickVal, joystickExp);
+
+		double[] synched = synchJoystickValues(rawLeftJoystickVal, rawRightJoystickVal, scaledLeft, scaledRight,
+				synchTolerance);
 		scaledLeft = synched[0];
 		scaledRight = synched[1];
-		
+
 		scaledLeft = applyDeadZone(rawLeftJoystickVal, scaledLeft, joystickDeadzone);
 		scaledRight = applyDeadZone(rawRightJoystickVal, scaledRight, joystickDeadzone);
 
@@ -70,10 +75,14 @@ public class UseDriveTank extends TestableCommand {
 
 	/**
 	 * Set the output value to 0 if the input is within a certain range of 0
-	 * @param valIn The value used to determine whether to set the value to 0
-	 * @param valOut The value to set to 0
-	 * @param deadZone If valIn is within this value of 0, then set valOut to 0
-	 * @return
+	 * 
+	 * @param valIn
+	 *            The value used to determine whether to set the value to 0
+	 * @param valOut
+	 *            The value to set to 0
+	 * @param deadZone
+	 *            If valIn is within this value of 0, then set valOut to 0
+	 * @return Either 0 or the original valOut
 	 */
 	public static double applyDeadZone(double valIn, double valOut, double deadZone) {
 		if (Math.abs(valIn) < deadZone) {
@@ -86,15 +95,23 @@ public class UseDriveTank extends TestableCommand {
 	 * Set two joystick Values to be equal to each other if they are within
 	 * synchTolerance
 	 * 
-	 * @param leftIn The raw left joystick value, used for determining whether to synch
-	 * @param rightIn The raw right joystick value, used for determining whether to synch
-	 * @param leftOut The output left value, which will be averaged if necessary
-	 * @param rightOut the output right value, which will be averaged if necessary
-	 * @param synchTolerance If the values are within this value of each other, 
-	 * set them both to their average
+	 * @param leftIn
+	 *            The raw left joystick value, used for determining whether to
+	 *            synch
+	 * @param rightIn
+	 *            The raw right joystick value, used for determining whether to
+	 *            synch
+	 * @param leftOut
+	 *            The output left value, which will be averaged if necessary
+	 * @param rightOut
+	 *            the output right value, which will be averaged if necessary
+	 * @param synchTolerance
+	 *            If the values are within this value of each other, set them
+	 *            both to their average
 	 * @return {newLeftValue, newRightValue}
 	 */
-	public static double[] synchJoystickValues(double leftIn, double rightIn, double leftOut, double rightOut, double synchTolerance) {
+	public static double[] synchJoystickValues(double leftIn, double rightIn, double leftOut, double rightOut,
+			double synchTolerance) {
 		double[] newVals = { leftOut, rightOut };
 		if (Math.abs(leftIn - rightIn) < synchTolerance) {
 			double avg = (leftOut + rightOut) / 2;
@@ -106,10 +123,13 @@ public class UseDriveTank extends TestableCommand {
 	}
 
 	/**
-	 * Raises a joystick value to a power while keeping the sign. Used for smoother control
-	 * of the drive
-	 * @param val the value to be scaled
-	 * @param pow the power that the value should be raised to
+	 * Raises a joystick value to a power while keeping the sign. Used for
+	 * smoother control of the drive
+	 * 
+	 * @param val
+	 *            the value to be scaled
+	 * @param pow
+	 *            the power that the value should be raised to
 	 * @return the scaled value
 	 */
 	public static double expJoystickValue(double val, double pow) {
@@ -117,4 +137,3 @@ public class UseDriveTank extends TestableCommand {
 	}
 
 }
-

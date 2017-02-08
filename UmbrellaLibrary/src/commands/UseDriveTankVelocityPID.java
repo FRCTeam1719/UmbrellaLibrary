@@ -7,8 +7,10 @@ import interfaces.IDrive;
 import interfaces.RobotInterface;
 
 /**
- * Command for controlling the robot in tank mode. Uses PID controllers to control the speed of the drive,
- * rather than simply plugging in values to the motors
+ * Command for controlling the robot in tank mode. Uses PID controllers to
+ * control the speed of the drive, rather than simply plugging in values to the
+ * motors
+ * 
  * @author Kyle
  *
  */
@@ -67,13 +69,10 @@ public class UseDriveTankVelocityPID extends UseDriveTank {
 														// range
 	private double speedPercentTolerance = 2;
 	private int pidBufferSize = 20; // Increase to increase stability,
-										// decrease to increase reactivity
+									// decrease to increase reactivity
 
-
-	/**
-	 * Represents the maximum speed of the robot being operated. This variable
-	 * is in physical terms, not in terms of the motor value
-	 */
+	// Represents the maximum speed of the robot being operated. This variable
+	// is in physical terms, not in terms of the motor value
 	private double maxSpeed;
 	private double maxInput;
 
@@ -83,9 +82,12 @@ public class UseDriveTankVelocityPID extends UseDriveTank {
 
 	/**
 	 * 
-	 * @param robot Robot to interface with
-	 * @param system Drive to interface with
-	 * @param maxSpeed The maximum speed at which the drive can move
+	 * @param robot
+	 *            Robot to interface with
+	 * @param system
+	 *            Drive to interface with
+	 * @param maxSpeed
+	 *            The maximum speed at which the drive can move
 	 */
 	public UseDriveTankVelocityPID(RobotInterface robot, IDrive system, double maxSpeed) {
 		super(robot, system);
@@ -104,53 +106,75 @@ public class UseDriveTankVelocityPID extends UseDriveTank {
 		robot.getDashboard().putData("ULIB UseDriveVelocity Right Cpontroller", rightDriveController);
 
 	}
-	
+
 	/**
 	 * 
-	 * @param robot Robot to interface with
-	 * @param system Drive to interface with
-	 * @param maxSpeed The maximum speed at which the drive can move
-	 * @param deadzone The dead zone for the joystick values
-	 * @param synchTolerance Tolerance for deciding whether to synch the joystick values
+	 * @param robot
+	 *            Robot to interface with
+	 * @param system
+	 *            Drive to interface with
+	 * @param maxSpeed
+	 *            The maximum speed at which the drive can move
+	 * @param deadzone
+	 *            The dead zone for the joystick values
+	 * @param synchTolerance
+	 *            Tolerance for deciding whether to synch the joystick values
 	 */
-	public UseDriveTankVelocityPID(RobotInterface robot, IDrive system, double maxSpeed, double deadzone, double synchTolerance) {
+	public UseDriveTankVelocityPID(RobotInterface robot, IDrive system, double maxSpeed, double deadzone,
+			double synchTolerance, int joystickExp) {
 		this(robot, system, maxSpeed);
 		this.joystickDeadzone = deadzone;
 		this.synchTolerance = synchTolerance;
+		this.joystickExp = joystickExp;
 	}
-	
+
 	/**
 	 * 
-	 * @param robot Robot to interface with
-	 * @param system Drive to interface with
-	 * @param maxSpeed the maximum speed at which the drive can move
-	 * @param speedPercentTolerance Tolerance for the PID controllers
-	 * @param bufferSize Size of the buffer that the PID controllers will use
+	 * @param robot
+	 *            Robot to interface with
+	 * @param system
+	 *            Drive to interface with
+	 * @param maxSpeed
+	 *            the maximum speed at which the drive can move
+	 * @param speedPercentTolerance
+	 *            Tolerance for the PID controllers
+	 * @param bufferSize
+	 *            Size of the buffer that the PID controllers will use
 	 */
-	public UseDriveTankVelocityPID(RobotInterface robot, IDrive system, double maxSpeed, double speedPercentTolerance, int bufferSize) {
+	public UseDriveTankVelocityPID(RobotInterface robot, IDrive system, double maxSpeed, double speedPercentTolerance,
+			int bufferSize) {
 		this(robot, system, maxSpeed);
 		this.speedPercentTolerance = speedPercentTolerance;
 		this.pidBufferSize = bufferSize;
 	}
-	
+
 	/**
 	 * 
-	 * @param robot Robot to interface with
-	 * @param system Drive to interface with
-	 * @param maxSpeed The maximum speed at which the drive can move
-	 * @param deadzone The dead zone for the joystick values
-	 * @param synchTolerance Tolerance for deciding whether to synch the joystick values
-	 * @param speedPercentTolerance Tolerance for the PID controllers
-	 * @param bufferSize Size of the buffer that the PID controllers will use
+	 * @param robot
+	 *            Robot to interface with
+	 * @param system
+	 *            Drive to interface with
+	 * @param maxSpeed
+	 *            The maximum speed at which the drive can move
+	 * @param deadzone
+	 *            The dead zone for the joystick values
+	 * @param synchTolerance
+	 *            Tolerance for deciding whether to synch the joystick values
+	 * @param speedPercentTolerance
+	 *            Tolerance for the PID controllers
+	 * @param bufferSize
+	 *            Size of the buffer that the PID controllers will use
 	 */
-	public UseDriveTankVelocityPID(RobotInterface robot, IDrive system, double maxSpeed, double deadzone, double synchTolerance, double speedPercentTolerance, int bufferSize) {
+	public UseDriveTankVelocityPID(RobotInterface robot, IDrive system, double maxSpeed, double deadzone,
+			double synchTolerance, int joystickExp, double speedPercentTolerance, int bufferSize) {
 		this(robot, system, maxSpeed);
 		this.joystickDeadzone = deadzone;
 		this.synchTolerance = synchTolerance;
+		this.joystickExp = joystickExp;
 		this.speedPercentTolerance = speedPercentTolerance;
 		this.pidBufferSize = bufferSize;
 	}
-	
+
 	@Override
 	public void initialize() {
 
@@ -160,17 +184,17 @@ public class UseDriveTankVelocityPID extends UseDriveTank {
 
 		// Configure PID controllers. Assumes that the drive max speed is the
 		// same forwards and backwards
-		leftDriveController.setOutputRange(-1, 1);
-		leftDriveController.setInputRange(-(maxInput), maxInput);
-		leftDriveController.setContinuous(false);
-		leftDriveController.setPercentTolerance(speedPercentTolerance);
-		leftDriveController.setToleranceBuffer(pidBufferSize);
+		leftDriveController.setOutputRange(-1, 1); // SpeedControllers take speeds between -1 and 1
+		leftDriveController.setInputRange(-(maxInput), maxInput); // Allows us to have a basis for a percent tolerance
+		leftDriveController.setContinuous(false); // Input does not loop back after a certain value
+		leftDriveController.setPercentTolerance(speedPercentTolerance); // Set a percent tolerance
+		leftDriveController.setToleranceBuffer(pidBufferSize); // Set how many previous errors to keep track of
 
-		rightDriveController.setOutputRange(-1, 1);
-		rightDriveController.setInputRange(-(maxInput), maxInput);
-		rightDriveController.setContinuous(false);
-		rightDriveController.setPercentTolerance(speedPercentTolerance);
-		rightDriveController.setToleranceBuffer(pidBufferSize);
+		rightDriveController.setOutputRange(-1, 1); // SpeedControllers take speeds between -1 and 1
+		rightDriveController.setInputRange(-(maxInput), maxInput); // Allows us to have a basis for a percent tolerance
+		rightDriveController.setContinuous(false); // Input does not loop back after a certain value
+		rightDriveController.setPercentTolerance(speedPercentTolerance); // Set a percent tolerance
+		rightDriveController.setToleranceBuffer(pidBufferSize); // Set how many previous errors to keep track of
 
 	}
 
@@ -184,12 +208,12 @@ public class UseDriveTankVelocityPID extends UseDriveTank {
 		double rawRightJoystickVal = oi.getDriverRightY();
 
 		// Scale the values
-		double scaledLeft = expJoystickValue(rawLeftJoystickVal, 2);
-		double scaledRight = expJoystickValue(rawRightJoystickVal, 2);
+		double scaledLeft = expJoystickValue(rawLeftJoystickVal, joystickExp);
+		double scaledRight = expJoystickValue(rawRightJoystickVal, joystickExp);
 
 		// Synch the values if they are close to each other
-		double[] synched = synchJoystickValues(rawLeftJoystickVal, rawRightJoystickVal, scaledLeft,
-				scaledRight, synchTolerance);
+		double[] synched = synchJoystickValues(rawLeftJoystickVal, rawRightJoystickVal, scaledLeft, scaledRight,
+				synchTolerance);
 		scaledLeft = synched[0];
 		scaledRight = synched[1];
 
