@@ -1,73 +1,153 @@
 package subsystems;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.Calendar;
+import java.time.LocalDateTime;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import devices.LogMessage;
+
+/**
+ * Logger class for writing logs to disk
+ * @author Kyle
+ *
+ */
 public class Logger {
 	
-	private OutputStream outputStream = null;
-	private File directory = null;
-	private File logFile = null;
-	private BufferedWriter logWriter = null;
-	private ArrayBlockingQueue<String> logBuffer = new ArrayBlockingQueue<String>(100);
+	// The rate at which the log buffer will be written to disk
+	private long updateRate = 1000;
+
+	// The file which the logger is writing to
+	private File logFile;
+
+	// Internal object which we will use to write to the file
+	private FileWriter fileWriter;
+
+	// Buffered stream for the file writer to make things go faster
+	private BufferedWriter bufferedFileWriter;
 	
-	Runnable loggingTask = new Runnable() {
+	// Thread-safe queue for writing the logs to disk
+	private ArrayBlockingQueue<LogMessage> logBuffer;
+	
+	// Timer which will schedule the task which writes messages to disk
+	private Timer logWriterTimer;
+	
+	// Task which writes the logs to disk
+	private WriteMessagesToDisk writeTask;
+	
+	/**
+	 * Task which writes the buffer to disk
+	 * @author Kyle
+	 *
+	 */
+	private class WriteMessagesToDisk extends TimerTask {
+
+		@Override
 		public void run() {
-			while (true) {
-				try {
-					String msg = logBuffer.take();
-					write(msg);
-				}
-				catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				
-			}
-		}
-	};
-	
-	public Logger(File directory) {
-		this.directory = directory;
-		if (this.directory != null) {
-			logFile = new File(Calendar.getInstance().getTime() + ".log");
+			writeLogBufferToDisk();
 		}
 		
-		try {
-			outputStream = new BufferedOutputStream(new FileOutputStream(logFile));
+	}
+
+	/**
+	 * Create a new Logger
+	 * @param outputDirectory The directory in which to store the log files
+	 * @throws FileNotFoundException
+	 */
+	public Logger(File outputDirectory) throws FileNotFoundException {
+
+		// Make sure the directory given is valid
+		if (outputDirectory == null) {
+			throw new NullPointerException("Error creating Logger, given output directory was null");
+		} else if (!outputDirectory.exists()) {
+			throw new FileNotFoundException();
 		}
-		catch (FileNotFoundException e) {
+
+		// Assume that two files are never going to be created at the exact same
+		// instant
+		String newFileName = LocalDateTime.now().toString() + ".log";
+		logFile = new File(newFileName);
+
+		// Initialize file writing objects
+		try {
+			fileWriter = new FileWriter(logFile);
+			bufferedFileWriter = new BufferedWriter(fileWriter);
+		} catch (IOException e) {
+			System.out.println("IOException creating File writer");
 			e.printStackTrace();
 		}
 		
+		// Initialize the log queue
+		logBuffer = new ArrayBlockingQueue<>(1000);
+		
+		// Create and start the task which periodically writes the buffer to disk
+		writeTask = new WriteMessagesToDisk();
+		logWriterTimer = new Timer();
+		logWriterTimer.scheduleAtFixedRate(writeTask, 0, updateRate);
+	}
+	
+	
+	/**
+	 * Add a message to the queue, to be written to disk
+	 * @param message The message to add
+	 */
+	public void addMessage(LogMessage message) {
+		if (logBuffer.remainingCapacity() == 0) {
+			System.err.println("Error: log buffer is full, cannot add message: " + message.getFullMessage());
+			return;
+		}
+		
+		logBuffer.add(message);
+	}
+	
+	/**
+	 * Changes the update rate at which the logs get written
+	 * @param newUpdateRate The new update rate, in milliseconds
+	 */
+	public void setWriteUpdateRate(long newUpdateRate) {
+		
+		// Cancel the current task, create a new one, and schedule the new one at the new update rate
+		updateRate = newUpdateRate;
+		writeTask.cancel();
+		writeTask = new WriteMessagesToDisk();
+		logWriterTimer.scheduleAtFixedRate(writeTask, 0, updateRate);
+	}
+	
+	/**
+	 * Gets the current update rate
+	 * @return The current update rate, in milliseconds
+	 */
+	public long getWriteUpdateRate() {
+		return updateRate;
+	}
+	
+	/**
+	 * Write a message to the disk
+	 * @param message The message to write
+	 */
+	private void writeMessageToDisk(LogMessage message) {
 		try {
-			logWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "utf-8"));
-		} catch (UnsupportedEncodingException e) {
+			bufferedFileWriter.write(message.getFullMessage());
+		} catch (IOException e) {
+			System.err.println("Error writing message to disk: " + message.getFullMessage());
 			e.printStackTrace();
 		}
 	}
 	
-	public Logger(OutputStream outStream) {
-		this.outputStream = outStream;
-		
-		logWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
-	}
-	
-	
-	private void write(String str) {
-		try {
-			logWriter.write(str);
-		}
-		catch (IOException e) {
-			e.printStackTrace();
+	/**
+	 * Write all messages in the buffer to disk
+	 */
+	private void writeLogBufferToDisk() {
+		LogMessage currentMessage;
+		while (!logBuffer.isEmpty()) {
+			currentMessage = logBuffer.remove();
+			writeMessageToDisk(currentMessage);
 		}
 	}
+
 }
