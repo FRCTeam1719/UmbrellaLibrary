@@ -1,7 +1,6 @@
 package subsystems;
 
 import commands.UseDriveTank;
-import customSensors.LoggableEncoder;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Command;
@@ -18,7 +17,7 @@ public class DrivePhysical extends Subsystem implements IDrive, Loggable {
 	RobotInterface robot;
 	
 	public DrivePhysical(RobotInterface robot, SpeedController leftSide, SpeedController rightSide,
-			LoggableEncoder leftEncoder, LoggableEncoder rightEncoder) {
+			IEncoder leftEncoder, IEncoder rightEncoder) {
 		
 		this.robot = robot;
 		this.robot.registerSubsystem(this);

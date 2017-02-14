@@ -34,10 +34,6 @@ public class MockEncoder implements Sensor, IEncoder{
 	}
 
 	@Override
-	public void log() {		
-	}
-
-	@Override
 	public void setPIDSourceType(PIDSourceType pidSource) {
 		this.sourceType = pidSource;
 	}
@@ -55,6 +51,11 @@ public class MockEncoder implements Sensor, IEncoder{
 		else {
 			return currentRate;
 		}
+	}
+
+	@Override
+	public void setDistancePerRevolution(double distancePerRev) {
+		return;
 	}
 
 }

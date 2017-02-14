@@ -15,6 +15,6 @@ public class LogMessage {
 	}
 	
 	public String getFullMessage() {
-		return "[" + dateFormat.format(cal) + "]: " + message;
+		return "[" + dateFormat.format(cal) + "]	" + message;
 	}
 }

@@ -126,6 +126,7 @@ public class Logger {
 		return updateRate;
 	}
 	
+	
 	/**
 	 * Write a message to the disk
 	 * @param message The message to write
