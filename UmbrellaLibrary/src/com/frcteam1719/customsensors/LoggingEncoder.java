@@ -1,6 +1,5 @@
 package com.frcteam1719.customsensors;
 
-import com.frcteam1719.devices.LogMessage;
 import com.frcteam1719.interfaces.Loggable;
 import com.frcteam1719.subsystems.Logger;
 
@@ -170,8 +169,8 @@ public class LoggingEncoder extends NamedEncoder implements Loggable {
 	 */
 	@Override
 	public void log() {
-		logger.addMessage(new LogMessage("(" + getName() + "): Distance: " + getDistance()));
-		logger.addMessage(new LogMessage("(" + getName() + "): Rate: " + getRate()));
+		System.out.println("[" + getName() + "]: Distance: " + getDistance());
+		System.out.println("[" + getName() + "]: Rate: " + getRate());
 	}
 
 }
